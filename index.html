@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuraSpark — AI Automation Agency</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --cream:       #E8E2D9;
+      --sage:        #ACA795;
+      --forest:      #404942;
+      --rust:        #B9573A;
+      --sand:        #D9885B;
+      --offwhite:    #F4F0EA;
+      --dark:        #1C1F1D;
+      --mid:         #2D312E;
+      --text:        #3A3D3B;
+      --light-sage:  #D6D3CA;
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--offwhite);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--rust);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transition: transform 0.15s ease;
+      mix-blend-mode: multiply;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid var(--rust);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transition: transform 0.35s ease, opacity 0.3s;
+      opacity: 0.5;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 60px;
+      background: rgba(244, 240, 234, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(172, 167, 149, 0.2);
+      transition: padding 0.3s ease;
+    }
+    nav.scrolled { padding: 16px 60px; }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 500; letter-spacing: 0.04em;
+      color: var(--forest); text-decoration: none;
+    }
+    .nav-logo span { color: var(--rust); }
+
+    .nav-links { display: flex; align-items: center; gap: 40px; }
+    .nav-links a {
+      font-size: 13px; font-weight: 400; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text);
+      text-decoration: none; opacity: 0.7;
+      transition: opacity 0.2s, color 0.2s;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--rust); }
+
+    .nav-cta {
+      font-size: 12px; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--offwhite) !important;
+      background: var(--forest); padding: 12px 28px;
+      opacity: 1 !important;
+      transition: background 0.25s !important;
+    }
+    .nav-cta:hover { background: var(--rust) !important; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      padding-top: 100px;
+      position: relative; overflow: hidden;
+    }
+
+    .hero-left {
+      padding: 80px 60px;
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; z-index: 2;
+    }
+
+    .hero-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; letter-spacing: 0.15em; color: var(--rust);
+      text-transform: uppercase; margin-bottom: 32px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hero-tag::before {
+      content: ''; display: block; width: 32px; height: 1px; background: var(--rust);
+    }
+
+    .hero-h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(52px, 6vw, 84px);
+      font-weight: 300; line-height: 1.05; letter-spacing: -0.01em;
+      color: var(--dark); margin-bottom: 28px;
+    }
+    .hero-h1 em { font-style: italic; color: var(--rust); }
+
+    .hero-sub {
+      font-size: 16px; font-weight: 300; line-height: 1.75;
+      color: var(--text); opacity: 0.8;
+      max-width: 440px; margin-bottom: 48px;
+    }
+
+    .hero-actions { display: flex; align-items: center; gap: 24px; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--rust); color: var(--offwhite);
+      padding: 16px 36px; font-size: 13px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--forest); transform: translateY(-1px); }
+    .btn-primary svg { transition: transform 0.2s; }
+    .btn-primary:hover svg { transform: translateX(4px); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--text); font-size: 13px; font-weight: 400;
+      letter-spacing: 0.06em; text-decoration: none;
+      border-bottom: 1px solid rgba(64, 73, 66, 0.3); padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--rust); border-color: var(--rust); }
+
+    .hero-stats {
+      display: flex; gap: 48px;
+      margin-top: 72px; padding-top: 40px;
+      border-top: 1px solid rgba(172, 167, 149, 0.3);
+    }
+    .stat-item { display: flex; flex-direction: column; gap: 4px; }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 40px; font-weight: 500; color: var(--forest); line-height: 1;
+    }
+    .stat-label {
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--sage); font-weight: 400;
+    }
+
+    /* ── HERO RIGHT PANEL ── */
+    .hero-right {
+      background: var(--forest);
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(172, 167, 149, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(172, 167, 149, 0.07) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridShift 20s linear infinite;
+    }
+    @keyframes gridShift { to { background-position: 40px 40px; } }
+
+    .hero-orb {
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #B9573A44, #40494222, transparent 70%);
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbPulse 6s ease-in-out infinite;
+    }
+    @keyframes orbPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.7; }
+      50%       { transform: translate(-50%, -50%) scale(1.12); opacity: 1;   }
+    }
+
+    .neural-canvas { position: absolute; inset: 0; }
+
+    .hero-badge {
+      position: absolute; bottom: 40px; left: 40px; right: 40px;
+      background: rgba(244, 240, 234, 0.07);
+      border: 1px solid rgba(172, 167, 149, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 24px 28px;
+      display: flex; align-items: center; gap: 20px;
+      animation: slideUp 0.8s ease 0.5s both;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    .badge-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #5EEA8D;
+      box-shadow: 0 0 12px #5EEA8D;
+      animation: blink 2s ease infinite;
+      flex-shrink: 0;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .badge-text { flex: 1; }
+    .badge-title { font-size: 13px; color: rgba(244, 240, 234, 0.9); font-weight: 500; margin-bottom: 2px; }
+    .badge-sub   { font-size: 11px; color: rgba(172, 167, 149, 0.8); font-family: 'Space Mono', monospace; }
+
+    /* ── SECTION COMMONS ── */
+    section { position: relative; }
+
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--rust); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::before {
+      content: ''; display: block; width: 24px; height: 1px; background: var(--rust);
+    }
+
+    .section-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(38px, 5vw, 60px);
+      font-weight: 300; line-height: 1.1; color: var(--dark);
+    }
+    .section-h2 em { font-style: italic; color: var(--rust); }
+
+    /* ── PROCESS ── */
+    #process {
+      padding: 120px 60px;
+      background: var(--dark);
+    }
+    .process-inner { max-width: 1200px; margin: 0 auto; }
+    .process-header { margin-bottom: 80px; }
+    .process-header .section-label          { color: var(--sand); }
+    .process-header .section-label::before  { background: var(--sand); }
+    .process-header .section-h2             { color: var(--cream); }
+    .process-header .section-h2 em          { color: var(--sand); }
+
+    .process-steps {
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      gap: 0; position: relative;
+    }
+    .process-steps::before {
+      content: '';
+      position: absolute; top: 28px; left: 8%; right: 8%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--sage), var(--rust), var(--sage), transparent);
+      opacity: 0.4;
+    }
+
+    .step-item {
+      padding: 0 16px;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .step-item.visible { opacity: 1; transform: translateY(0); }
+
+    .step-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; color: var(--rust); letter-spacing: 0.1em;
+      background: var(--mid); border: 1px solid rgba(185, 87, 58, 0.3);
+      width: 56px; height: 56px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px; position: relative; z-index: 2;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .step-item:hover .step-num {
+      background: var(--rust); color: var(--offwhite); border-color: var(--rust);
+    }
+
+    .step-title { font-size: 13px; font-weight: 500; color: var(--cream); margin-bottom: 8px; letter-spacing: 0.02em; }
+    .step-desc  { font-size: 12px; color: var(--sage); line-height: 1.6; }
+
+    /* ── SERVICES ── */
+    #services { padding: 120px 60px; background: var(--offwhite); }
+    .services-inner { max-width: 1200px; margin: 0 auto; }
+
+    .services-header {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; margin-bottom: 80px; align-items: end;
+    }
+    .services-intro { font-size: 16px; line-height: 1.8; color: var(--text); opacity: 0.75; }
+
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2px; background: rgba(172, 167, 149, 0.2);
+    }
+
+    .service-card {
+      background: var(--offwhite);
+      padding: 44px 36px;
+      position: relative; overflow: hidden;
+      transition: background 0.3s;
+      cursor: default;
+    }
+    .service-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--rust);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .service-card:hover { background: var(--cream); }
+    .service-card:hover::after { transform: scaleX(1); }
+
+    .service-icon {
+      width: 44px; height: 44px; margin-bottom: 28px;
+      color: var(--rust); opacity: 0.85;
+    }
+    .service-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; color: var(--sage); letter-spacing: 0.12em;
+      position: absolute; top: 32px; right: 32px;
+    }
+    .service-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px; font-weight: 500; color: var(--dark);
+      margin-bottom: 14px; line-height: 1.2;
+    }
+    .service-desc { font-size: 14px; line-height: 1.75; color: var(--text); opacity: 0.75; margin-bottom: 24px; }
+
+    .service-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--forest); background: rgba(64, 73, 66, 0.08);
+      padding: 5px 12px;
+    }
+
+    /* ── WHY US ── */
+    #why {
+      padding: 120px 60px;
+      background: var(--forest);
+      position: relative; overflow: hidden;
+    }
+    #why::before {
+      content: 'NS';
+      position: absolute; right: -40px; top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 320px; font-weight: 600;
+      color: rgba(255, 255, 255, 0.03); line-height: 1;
+      pointer-events: none; user-select: none;
+    }
+
+    .why-inner { max-width: 1200px; margin: 0 auto; }
+    .why-inner .section-label          { color: var(--sand); }
+    .why-inner .section-label::before  { background: var(--sand); }
+    .why-inner .section-h2             { color: var(--cream); margin-bottom: 72px; }
+    .why-inner .section-h2 em          { color: var(--sand); }
+
+    .usp-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 2px; background: rgba(172, 167, 149, 0.1);
+    }
+    .usp-item {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 48px 44px;
+      display: flex; gap: 28px;
+      transition: background 0.3s;
+    }
+    .usp-item:hover { background: rgba(255, 255, 255, 0.06); }
+
+    .usp-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px; font-weight: 300;
+      color: rgba(217, 136, 91, 0.2); line-height: 1;
+      min-width: 56px; margin-top: -8px;
+      transition: color 0.3s;
+    }
+    .usp-item:hover .usp-number { color: rgba(217, 136, 91, 0.5); }
+
+    .usp-title { font-size: 18px; font-weight: 500; color: var(--cream); margin-bottom: 10px; }
+    .usp-desc  { font-size: 14px; line-height: 1.75; color: var(--sage); }
+
+    /* ── INDUSTRIES ── */
+    #industries { padding: 120px 60px; background: var(--cream); }
+    .ind-inner { max-width: 1200px; margin: 0 auto; }
+    .ind-inner .section-h2 { margin-bottom: 60px; }
+
+    .industry-list { display: flex; flex-direction: column; gap: 2px; }
+
+    .ind-item {
+      display: grid; grid-template-columns: 80px 1fr auto;
+      align-items: center; gap: 40px;
+      padding: 28px 0;
+      border-top: 1px solid rgba(172, 167, 149, 0.3);
+      cursor: default; transition: padding 0.3s;
+    }
+    .ind-item:last-child { border-bottom: 1px solid rgba(172, 167, 149, 0.3); }
+    .ind-item:hover { padding-left: 12px; }
+
+    .ind-num  { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--sage); }
+    .ind-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px; font-weight: 300; color: var(--dark);
+      transition: color 0.3s;
+    }
+    .ind-item:hover .ind-name { color: var(--rust); }
+    .ind-desc { font-size: 13px; color: var(--sage); max-width: 320px; text-align: right; }
+
+    /* ── PRICING ── */
+    #pricing { padding: 120px 60px; background: var(--offwhite); }
+    .pricing-inner { max-width: 1200px; margin: 0 auto; }
+    .pricing-inner .section-h2 { margin-bottom: 64px; }
+
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .pricing-card {
+      background: var(--cream);
+      border: 1px solid rgba(172, 167, 149, 0.3);
+      padding: 48px 36px;
+      position: relative; overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .pricing-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(64, 73, 66, 0.1);
+    }
+    .pricing-card.featured {
+      background: var(--forest);
+      color: var(--cream);
+      border-color: var(--forest);
+    }
+
+    .pricing-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+      background: var(--rust); color: var(--offwhite);
+      padding: 6px 14px;
+      position: absolute; top: 32px; right: 32px;
+    }
+
+    .pricing-tier {
+      font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--sage); margin-bottom: 20px;
+      font-family: 'Space Mono', monospace;
+    }
+    .featured .pricing-tier { color: var(--sand); }
+
+    .pricing-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px; font-weight: 300;
+      color: var(--dark); line-height: 1; margin-bottom: 6px;
+    }
+    .featured .pricing-price { color: var(--cream); }
+
+    .pricing-unit { font-size: 13px; color: var(--sage); margin-bottom: 36px; }
+    .featured .pricing-unit { color: rgba(172, 167, 149, 0.8); }
+
+    .pricing-features {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 14px;
+      margin-bottom: 40px;
+    }
+    .pricing-features li {
+      font-size: 14px; color: var(--text);
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .featured .pricing-features li { color: rgba(244, 240, 234, 0.85); }
+    .pricing-features li::before {
+      content: '→'; color: var(--rust);
+      font-size: 12px; margin-top: 2px; flex-shrink: 0;
+    }
+    .featured .pricing-features li::before { color: var(--sand); }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials { padding: 120px 60px; background: var(--dark); }
+    .test-inner { max-width: 1200px; margin: 0 auto; }
+    .test-inner .section-label          { color: var(--sand); }
+    .test-inner .section-label::before  { background: var(--sand); }
+    .test-inner .section-h2             { color: var(--cream); margin-bottom: 64px; }
+    .test-inner .section-h2 em          { color: var(--sand); }
+
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .test-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(172, 167, 149, 0.1);
+      padding: 40px 32px;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .test-card:hover { background: rgba(255, 255, 255, 0.07); transform: translateY(-3px); }
+
+    .test-quote-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 80px; color: var(--rust);
+      line-height: 0.6; opacity: 0.5; margin-bottom: 20px;
+    }
+    .test-body {
+      font-size: 15px; line-height: 1.8;
+      color: rgba(244, 240, 234, 0.8);
+      font-style: italic; font-family: 'Cormorant Garamond', serif;
+      margin-bottom: 28px;
+    }
+    .test-author { display: flex; align-items: center; gap: 14px; }
+    .test-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--forest); border: 1px solid rgba(172, 167, 149, 0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 500; color: var(--sage);
+      font-family: 'Space Mono', monospace;
+      flex-shrink: 0;
+    }
+    .test-name { font-size: 13px; color: var(--cream); font-weight: 500; }
+    .test-role { font-size: 11px; color: var(--sage); margin-top: 2px; }
+
+    /* ── CONTACT ── */
+    #contact {
+      padding: 120px 60px;
+      background: var(--rust);
+      position: relative; overflow: hidden;
+    }
+    #contact::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(244, 240, 234, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(244, 240, 234, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .contact-inner {
+      max-width: 900px; margin: 0 auto;
+      position: relative; z-index: 2; text-align: center;
+    }
+    .contact-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(244, 240, 234, 0.6); margin-bottom: 24px;
+    }
+    .contact-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 5vw, 72px); font-weight: 300;
+      color: var(--offwhite); line-height: 1.05; margin-bottom: 24px;
+    }
+    .contact-h2 em { font-style: italic; }
+    .contact-sub {
+      font-size: 16px; color: rgba(244, 240, 234, 0.75); line-height: 1.7;
+      max-width: 560px; margin: 0 auto 52px;
+    }
+
+    .contact-form {
+      display: flex; flex-direction: column; gap: 16px;
+      max-width: 560px; margin: 0 auto;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .form-field input,
+    .form-field textarea {
+      width: 100%;
+      background: rgba(244, 240, 234, 0.12);
+      border: 1px solid rgba(244, 240, 234, 0.25);
+      color: var(--offwhite);
+      padding: 16px 20px;
+      font-size: 14px; font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .form-field input::placeholder,
+    .form-field textarea::placeholder { color: rgba(244, 240, 234, 0.45); }
+    .form-field input:focus,
+    .form-field textarea:focus {
+      border-color: rgba(244, 240, 234, 0.6);
+      background: rgba(244, 240, 234, 0.18);
+    }
+    .form-field textarea { resize: vertical; min-height: 120px; }
+
+    .form-submit {
+      background: var(--offwhite); color: var(--rust);
+      border: none; padding: 18px 40px;
+      font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+      transition: background 0.25s, color 0.25s, transform 0.2s;
+    }
+    .form-submit:hover { background: var(--dark); color: var(--offwhite); transform: translateY(-1px); }
+
+    .contact-alt {
+      margin-top: 36px;
+      font-size: 13px; color: rgba(244, 240, 234, 0.6);
+    }
+    .contact-alt a {
+      color: rgba(244, 240, 234, 0.9);
+      text-decoration: underline; text-underline-offset: 3px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      padding: 64px 60px 32px;
+      border-top: 1px solid rgba(172, 167, 149, 0.1);
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 60px; margin-bottom: 56px;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; color: var(--cream); margin-bottom: 16px;
+      display: block;
+    }
+    .footer-logo span { color: var(--rust); }
+    .footer-tagline { font-size: 13px; color: var(--sage); line-height: 1.7; max-width: 260px; }
+
+    .footer-col h4 {
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--sage); font-family: 'Space Mono', monospace;
+      margin-bottom: 20px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a {
+      font-size: 13px; color: rgba(172, 167, 149, 0.7);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .footer-col ul li a:hover { color: var(--sand); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(172, 167, 149, 0.1);
+      padding-top: 28px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy { font-size: 12px; color: rgba(172, 167, 149, 0.5); }
+    .footer-socials { display: flex; gap: 20px; }
+    .footer-socials a {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(172, 167, 149, 0.5); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-socials a:hover { color: var(--sand); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--dark); }
+    ::-webkit-scrollbar-thumb { background: var(--rust); border-radius: 2px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 20px 24px; }
+      .nav-links { display: none; }
+
+      #hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left  { padding: 120px 24px 60px; }
+      .hero-right { height: 300px; }
+      .hero-stats { flex-wrap: wrap; gap: 28px; }
+
+      #process, #services, #why,
+      #industries, #pricing,
+      #testimonials, #contact { padding: 80px 24px; }
+
+      .process-steps      { grid-template-columns: repeat(3, 1fr); }
+      .services-grid      { grid-template-columns: 1fr; }
+      .services-header    { grid-template-columns: 1fr; }
+      .testimonials-grid  { grid-template-columns: 1fr; }
+      .usp-grid           { grid-template-columns: 1fr; }
+      .pricing-grid       { grid-template-columns: 1fr; }
+      .footer-top         { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .form-row           { grid-template-columns: 1fr; }
+
+      .ind-item  { grid-template-columns: 60px 1fr; gap: 20px; }
+      .ind-desc  { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ── NAV ── -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">Neura<span>Spark</span></a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#industries">Industries</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#contact" class="nav-cta">Start a Project</a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section id="hero">
+    <div class="hero-left">
+      <div class="hero-tag">AI Automation Agency · Est. 2024</div>
+
+      <h1 class="hero-h1">
+        We Build<br/>
+        <em>Intelligent</em><br/>
+        Systems for<br/>
+        Business Growth
+      </h1>
+
+      <p class="hero-sub">
+        NeuraSpark designs and deploys AI-powered automation that reduces manual work,
+        increases revenue, and gives your business a competitive edge — without the complexity.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">
+          Book a Free Consultation
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="#services" class="btn-ghost">Explore Services</a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num">5+</span>
+          <span class="stat-label">Projects Delivered</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">24h</span>
+          <span class="stat-label">AI Support Uptime</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">3×</span>
+          <span class="stat-label">Avg. Efficiency Gain</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-grid"></div>
+      <div class="hero-orb"></div>
+      <canvas class="neural-canvas" id="neuralCanvas"></canvas>
+      <div class="hero-badge">
+        <div class="badge-dot"></div>
+        <div class="badge-text">
+          <div class="badge-title">AI Systems — Live &amp; Operational</div>
+          <div class="badge-sub">→ Chatbot responding · Automations running · Analytics active</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROCESS ── -->
+  <section id="process">
+    <div class="process-inner">
+      <div class="process-header reveal">
+        <div class="section-label">How We Work</div>
+        <h2 class="section-h2">From <em>Idea</em> to<br/>Deployment in Weeks</h2>
+      </div>
+
+      <div class="process-steps">
+        <div class="step-item">
+          <div class="step-num">01</div>
+          <div class="step-title">Consultation</div>
+          <div class="step-desc">We audit your workflows and identify the highest-impact automation opportunities.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">02</div>
+          <div class="step-title">Planning</div>
+          <div class="step-desc">We design the solution architecture, feature set, and delivery timeline.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">03</div>
+          <div class="step-title">Development</div>
+          <div class="step-desc">Our team builds using proven AI stacks — OpenAI, Python, React, and more.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">04</div>
+          <div class="step-title">Testing</div>
+          <div class="step-desc">Rigorous QA ensures your system is robust before a single user touches it.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">05</div>
+          <div class="step-title">Deployment</div>
+          <div class="step-desc">We launch, connect your domain, and make it live for your customers.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">06</div>
+          <div class="step-title">Support</div>
+          <div class="step-desc">Ongoing maintenance, updates, and improvements — we don't disappear after launch.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SERVICES ── -->
+  <section id="services">
+    <div class="services-inner">
+      <div class="services-header reveal">
+        <div>
+          <div class="section-label">What We Build</div>
+          <h2 class="section-h2">Six Ways AI<br/>Transforms Your <em>Business</em></h2>
+        </div>
+        <p class="services-intro">
+          Every solution we build is tailored to real business problems — not generic templates.
+          We focus on measurable outcomes: fewer manual hours, more conversions, better customer experience.
+        </p>
+      </div>
+
+      <div class="services-grid">
+
+        <div class="service-card reveal">
+          <span class="service-num">01</span>
+          <svg class="service-icon" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+            <rect x="4" y="8" width="28" height="24" rx="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M12 18h12M12 22h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="34" cy="30" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M31 30l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <h3 class="service-title">AI Chatbot Development</h3>
+          <p class="service-desc">Smart conversational agents for WhatsApp, your website, Instagram, and Facebook. They handle queries, book appointments, capture leads, and answer FAQs — 24/7, without a salary.</p>
+          <div class="service-tags">
+            <span class="tag">WhatsApp</span>
+            <span class="tag">Website</span>
+            <span class="tag">Lead Gen</span>
+            <span class="tag">24/7 Support</span>
+          </div>
+        </div>
+
+        <div class="service-card reveal">
+          <span class="service-num">02</span>
+          <svg class="service-icon" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+            <path d="M8 20v-8a4 4 0 014-4h20a4 4 0 014 4v8" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="4" y="20" width="36" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="14" cy="28" r="2" fill="currentColor"/>
+            <circle cx="22" cy="28" r="2" fill="currentColor"/>
+            <circle cx="30" cy="28" r="2" fill="currentColor"/>
+          </svg>
+          <h3 class="service-title">Business Automation Systems</h3>
+          <p class="service-desc">Automate repetitive tasks across your operation — from appointment booking and CRM updates to order tracking and employee scheduling. Your team focuses on what matters.</p>
+          <div class="service-tags">
+            <span class="tag">Booking</span>
+            <span class="tag">CRM</span>
+            <span class="tag">Scheduling</span>
+            <span class="tag">Tracking</span>
+          </div>
+        </div>
+
+        <div class="service-card reveal">
+          <span class="service-num">03</span>
+          <svg class="service-icon" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+            <rect x="6" y="6" width="24" height="30" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M12 14h12M12 18h12M12 22h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M28 30l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M32 26v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <h3 class="service-title">AI Document Generation</h3>
+          <p class="service-desc">Generate offer letters, contracts, reports, and emails instantly from user inputs. What took 30 minutes now takes 30 seconds — with consistent formatting every time.</p>
+          <div class="service-tags">
+            <span class="tag">Offer Letters</span>
+            <span class="tag">Contracts</span>
+            <span class="tag">Reports</span>
+          </div>
+        </div>
+
+        <div class="service-card reveal">
+          <span class="service-num">04</span>
+          <svg class="service-icon" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+            <path d="M6 34L14 22l6 6 8-14 10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="14" cy="22" r="2" fill="currentColor"/>
+            <circle cx="20" cy="28" r="2" fill="currentColor"/>
+            <circle cx="28" cy="14" r="2" fill="currentColor"/>
+          </svg>
+          <h3 class="service-title">Predictive Analytics</h3>
+          <p class="service-desc">Machine learning models that forecast sales trends, predict customer behaviour, and surface actionable insights — so you make decisions based on data, not guesswork.</p>
+          <div class="service-tags">
+            <span class="tag">Sales Forecast</span>
+            <span class="tag">Demand Pred.</span>
+            <span class="tag">ML Models</span>
+          </div>
+        </div>
+
+        <div class="service-card reveal">
+          <span class="service-num">05</span>
+          <svg class="service-icon" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+            <circle cx="22" cy="22" r="16" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M22 14v8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M10 10l4 4M30 10l-4 4M10 34l4-4M30 34l-4-4" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+          </svg>
+          <h3 class="service-title">Custom AI Solutions</h3>
+          <p class="service-desc">Image classification, recommendation engines, smart dashboards — if your business has a unique AI challenge, we architect a solution built around your exact workflow and data.</p>
+          <div class="service-tags">
+            <span class="tag">Image AI</span>
+            <span class="tag">Recommend</span>
+            <span class="tag">Dashboards</span>
+          </div>
+        </div>
+
+        <div class="service-card reveal">
+          <span class="service-num">06</span>
+          <svg class="service-icon" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+            <rect x="4" y="8" width="36" height="26" rx="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M4 16h36" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="10" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="15" cy="12" r="1.5" fill="currentColor"/>
+            <path d="M14 24h16M14 28h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <h3 class="service-title">Website + AI Integration</h3>
+          <p class="service-desc">We build business websites and admin dashboards with AI built-in from the ground up — chatbots, smart analytics, automation triggers, and clean UX that converts visitors into clients.</p>
+          <div class="service-tags">
+            <span class="tag">Website</span>
+            <span class="tag">Dashboard</span>
+            <span class="tag">Analytics</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WHY US ── -->
+  <section id="why">
+    <div class="why-inner">
+      <div class="section-label">Why NeuraSpark</div>
+      <h2 class="section-h2 reveal">What Makes Us<br/><em>Different</em></h2>
+
+      <div class="usp-grid">
+        <div class="usp-item reveal">
+          <div class="usp-number">01</div>
+          <div class="usp-content">
+            <div class="usp-title">Automation-First Thinking</div>
+            <div class="usp-desc">We don't just build apps — we engineer systems that replace hours of manual work. Every project is evaluated by one metric: how much time does this save your team per week?</div>
+          </div>
+        </div>
+        <div class="usp-item reveal">
+          <div class="usp-number">02</div>
+          <div class="usp-content">
+            <div class="usp-title">Affordable for Small Business</div>
+            <div class="usp-desc">Enterprise-grade AI shouldn't require an enterprise budget. Our pricing is designed specifically for SMBs and startups who need ROI, not overhead — with transparent packages and no hidden costs.</div>
+          </div>
+        </div>
+        <div class="usp-item reveal">
+          <div class="usp-number">03</div>
+          <div class="usp-content">
+            <div class="usp-title">Real-World Use Cases Only</div>
+            <div class="usp-desc">We build for salons, restaurants, clinics, and retail stores — not theoretical demos. Our solutions are tested in real business environments before they reach your customers.</div>
+          </div>
+        </div>
+        <div class="usp-item reveal">
+          <div class="usp-number">04</div>
+          <div class="usp-content">
+            <div class="usp-title">End-to-End Ownership</div>
+            <div class="usp-desc">One team handles everything from day one to post-launch. No miscommunication between vendors, no handoff gaps. We own the outcome, not just the deliverable.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── INDUSTRIES ── -->
+  <section id="industries">
+    <div class="ind-inner">
+      <div class="section-label">Industries We Serve</div>
+      <h2 class="section-h2 reveal">Built for <em>Your</em> Industry</h2>
+
+      <div class="industry-list">
+        <div class="ind-item reveal">
+          <span class="ind-num">01</span>
+          <span class="ind-name">Beauty &amp; Salons</span>
+          <span class="ind-desc">Automated booking, staff scheduling, client history tracking</span>
+        </div>
+        <div class="ind-item reveal">
+          <span class="ind-num">02</span>
+          <span class="ind-name">Restaurants &amp; F&amp;B</span>
+          <span class="ind-desc">Demand forecasting, order management, customer loyalty AI</span>
+        </div>
+        <div class="ind-item reveal">
+          <span class="ind-num">03</span>
+          <span class="ind-name">Healthcare &amp; Clinics</span>
+          <span class="ind-desc">Appointment automation, patient follow-ups, report generation</span>
+        </div>
+        <div class="ind-item reveal">
+          <span class="ind-num">04</span>
+          <span class="ind-name">Retail &amp; E-commerce</span>
+          <span class="ind-desc">Inventory prediction, support chatbots, personalised recommendations</span>
+        </div>
+        <div class="ind-item reveal">
+          <span class="ind-num">05</span>
+          <span class="ind-name">Startups &amp; Tech</span>
+          <span class="ind-desc">MVP AI integrations, custom ML pipelines, smart dashboards</span>
+        </div>
+        <div class="ind-item reveal">
+          <span class="ind-num">06</span>
+          <span class="ind-name">Professional Services</span>
+          <span class="ind-desc">Document automation, CRM intelligence, client onboarding flows</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PRICING ── -->
+  <section id="pricing">
+    <div class="pricing-inner">
+      <div class="section-label">Transparent Pricing</div>
+      <h2 class="section-h2 reveal">Investment, Not <em>Expense</em></h2>
+
+      <div class="pricing-grid">
+
+        <div class="pricing-card reveal">
+          <div class="pricing-tier">Starter</div>
+          <div class="pricing-price">₹2K–₹15K</div>
+          <div class="pricing-unit">One-time project</div>
+          <ul class="pricing-features">
+            <li>AI chatbot (WhatsApp or website)</li>
+            <li>FAQ automation &amp; lead capture</li>
+            <li>Appointment booking flow</li>
+            <li>30 days post-launch support</li>
+            <li>Mobile responsive design</li>
+          </ul>
+          <a href="#contact" class="btn-primary" style="justify-content:center;">Get Started →</a>
+        </div>
+
+        <div class="pricing-card featured reveal">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-tier">Business</div>
+          <div class="pricing-price">₹15K–₹50K</div>
+          <div class="pricing-unit">One-time project</div>
+          <ul class="pricing-features">
+            <li>Full automation system (CRM + booking)</li>
+            <li>Custom AI chatbot with integrations</li>
+            <li>Admin dashboard &amp; analytics</li>
+            <li>Document generation tool</li>
+            <li>Staff &amp; employee management</li>
+            <li>90 days post-launch support</li>
+          </ul>
+          <a href="#contact" class="btn-primary" style="background:var(--sand);justify-content:center;">Get Started →</a>
+        </div>
+
+        <div class="pricing-card reveal">
+          <div class="pricing-tier">Maintenance</div>
+          <div class="pricing-price">₹1K–₹5K</div>
+          <div class="pricing-unit">Per month</div>
+          <ul class="pricing-features">
+            <li>Ongoing bug fixes &amp; updates</li>
+            <li>AI model performance monitoring</li>
+            <li>Feature enhancements</li>
+            <li>Priority support response</li>
+            <li>Monthly performance report</li>
+          </ul>
+          <a href="#contact" class="btn-primary" style="justify-content:center;">Get Started →</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ── -->
+  <section id="testimonials">
+    <div class="test-inner">
+      <div class="section-label">Client Stories</div>
+      <h2 class="section-h2 reveal">Real Results,<br/>Real <em>Businesses</em></h2>
+
+      <div class="testimonials-grid">
+
+        <div class="test-card reveal">
+          <div class="test-quote-mark">"</div>
+          <p class="test-body">NeuraSpark built our salon's booking chatbot in under two weeks. We went from missing calls daily to having a fully automated system. Bookings are up 40% and my receptionist finally has breathing room.</p>
+          <div class="test-author">
+            <div class="test-avatar">PR</div>
+            <div>
+              <div class="test-name">Priya Sharma</div>
+              <div class="test-role">Owner, Lumière Salon — Mumbai</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="test-card reveal">
+          <div class="test-quote-mark">"</div>
+          <p class="test-body">We implemented their predictive analytics tool for our restaurant chain. Within a month we reduced food waste by 28% by knowing exactly what to stock on weekends. The ROI paid for the project in 6 weeks.</p>
+          <div class="test-author">
+            <div class="test-avatar">AK</div>
+            <div>
+              <div class="test-name">Harshal Meshram</div>
+              <div class="test-role">Restaurant Chain Owner</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="test-card reveal">
+          <div class="test-quote-mark">"</div>
+          <p class="test-body">The AI document generation tool NeuraSpark built for our HR team cut offer letter turnaround from 2 days to under 5 minutes. It's now an essential part of our hiring process — we can't imagine going back.</p>
+          <div class="test-author">
+            <div class="test-avatar">MS</div>
+            <div>
+              <div class="test-name">Piyush Deshmukh</div>
+              <div class="test-role">College Student</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ── -->
+  <section id="contact">
+    <div class="contact-inner">
+      <div class="contact-tag">Let's Build Together</div>
+      <h2 class="contact-h2">Ready to Automate<br/><em>Your Business?</em></h2>
+      <p class="contact-sub">Book a free 30-minute consultation. We'll map out exactly where AI can save you time and money — no obligation, no tech jargon.</p>
+
+      <form class="contact-form" id="contactForm" novalidate>
+        <div class="form-row">
+          <div class="form-field"><input type="text"  name="name"     placeholder="Your name"         required /></div>
+          <div class="form-field"><input type="email" name="email"    placeholder="Email address"     required /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-field"><input type="text"  name="business" placeholder="Business name" /></div>
+          <div class="form-field"><input type="tel"   name="phone"    placeholder="WhatsApp / Phone" /></div>
+        </div>
+        <div class="form-field">
+          <textarea name="message" placeholder="Tell us about your business and what you'd like to automate..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">
+          Send Message — Let's Talk
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
+
+      <div class="contact-alt">
+        Prefer WhatsApp? <a href="https://wa.me/919284069484" target="_blank" rel="noopener noreferrer">Message us directly →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="footer-logo">Neura<span>Spark</span></span>
+        <p class="footer-tagline">Automating businesses with intelligent AI systems — affordable, practical, and built to last.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">AI Chatbots</a></li>
+          <li><a href="#services">Business Automation</a></li>
+          <li><a href="#services">Document Generation</a></li>
+          <li><a href="#services">Predictive Analytics</a></li>
+          <li><a href="#services">Custom AI Solutions</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#why">About Us</a></li>
+          <li><a href="#process">How We Work</a></li>
+          <li><a href="#industries">Industries</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:connect.neuraspark@gmail.com">connect.neuraspark@gmail.com</a></li>
+          <li><a href="https://wa.me/919284069484" target="_blank" rel="noopener noreferrer">WhatsApp Us</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">Instagram</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2024 NeuraSpark AI Agency. All rights reserved.</span>
+      <div class="footer-socials">
+        <a href="#">LinkedIn</a>
+        <a href="#">Instagram</a>
+        <a href="#">GitHub</a>
+        <a href="#">WhatsApp</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── CURSOR ── */
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX;
+      my = e.clientY;
+      cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+    });
+
+    (function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+      requestAnimationFrame(animateRing);
+    })();
+
+    /* ── NAV SCROLL SHRINK ── */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ── NEURAL CANVAS ── */
+    (function initNeural() {
+      const canvas = document.getElementById('neuralCanvas');
+      const ctx    = canvas.getContext('2d');
+      let nodes = [], W = 0, H = 0;
+
+      function resize() {
+        W = canvas.width  = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+      }
+
+      function buildNodes() {
+        nodes = [];
+        const count = Math.max(20, Math.floor((W * H) / 14000));
+        for (let i = 0; i < count; i++) {
+          nodes.push({
+            x:  Math.random() * W,
+            y:  Math.random() * H,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            r:  Math.random() * 2 + 1
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        const maxDist = 120;
+
+        for (const n of nodes) {
+          n.x += n.vx;
+          n.y += n.vy;
+          if (n.x < 0 || n.x > W) n.vx *= -1;
+          if (n.y < 0 || n.y > H) n.vy *= -1;
+        }
+
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x;
+            const dy = nodes[i].y - nodes[j].y;
+            const d  = Math.sqrt(dx * dx + dy * dy);
+            if (d < maxDist) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(185,87,58,${(1 - d / maxDist) * 0.25})`;
+              ctx.lineWidth   = 0.5;
+              ctx.moveTo(nodes[i].x, nodes[i].y);
+              ctx.lineTo(nodes[j].x, nodes[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        ctx.fillStyle = 'rgba(217,136,91,0.5)';
+        for (const n of nodes) {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      const ro = new ResizeObserver(() => { resize(); buildNodes(); });
+      ro.observe(canvas.parentElement);
+      resize();
+      buildNodes();
+      draw();
+    })();
+
+    /* ── SCROLL REVEAL ── */
+    (function initReveal() {
+      const revealEls = document.querySelectorAll('.reveal');
+      const observer  = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const delay = Number(entry.target.dataset.delay || 0);
+            setTimeout(() => entry.target.classList.add('visible'), delay * 100);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      revealEls.forEach(el => observer.observe(el));
+
+      const processSteps = document.querySelector('.process-steps');
+      if (processSteps) {
+        const stepObserver = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.querySelectorAll('.step-item').forEach((item, i) => {
+                setTimeout(() => item.classList.add('visible'), i * 100);
+              });
+              stepObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.2 });
+        stepObserver.observe(processSteps);
+      }
+    })();
+
+    /* ── CONTACT FORM ── */
+    document.getElementById('contactForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const btn = this.querySelector('.form-submit');
+      btn.textContent  = '✓ Message Sent — We\'ll be in touch soon!';
+      btn.style.background    = '#404942';
+      btn.style.color         = '#E8E2D9';
+      btn.style.pointerEvents = 'none';
+    });
+  </script>
+</body>
+</html>
